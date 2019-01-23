@@ -2,10 +2,93 @@
 <html>
   <head>
     <title>Train Time</title>
+    <link rel="icon" type="image/png" href="http://jlevine84.github.io/favicon.ico">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="assets/javascript/javascript.js"></script>  
   </head>
   
   <body>
-  
+    <div class="container-fluid" id="title-cont">
+      <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10" id="page-title"><strong>It's Train Time!</strong></div>
+        <div class="col-1"></div>
+      </div>
+    </div>
+
+    <div class="container-fluid" id="database-cont">
+      <div class="row">
+          <div class="col-1"></div>
+          <div class="col-10" id="table-title"><strong>Current Train Schedule</strong></div>
+          <div class="col-1"></div>
+      </div>
+
+      <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Name:</th>
+                <th scope="col">Destination:</th>
+                <th scope="col">Frequency(min):</th>
+                <th scope="col">Next Arrival:</th>
+                <th scope="col">Minutes Away:</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+        <div class="col-1"></div>
+      </div>
+    </div>
+
+    <div class="container-fluid" id="enter-cont">
+
+      <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10" id="submit-title"><strong>Submit Title</strong></div>
+        <div class="col-1"></div>
+      </div>
+
+      <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10" id="forms">
+
+          <form>
+            <div class="form-group">
+              <label for="TrainName"><strong>Train Name</strong></label>
+              <input type="text" class="form-control" id="train-name"  placeholder="">
+            </div>
+
+            <div class="form-group">
+              <label for="TrainDest"><strong>Train Destination</strong></label>
+              <input type="text" class="form-control" id="train-dest"  placeholder="">
+            </div>
+
+            <div class="form-group">
+              <label for="TrainFirst"><strong>First Train Time(HHMM - military time)</strong></label>
+              <input type="number" class="form-control" id="train-first"  placeholder="">
+            </div>
+
+            <div class="form-group">
+              <label for="TrainFreq"><strong>Train Frquency(minutes)</strong></label>
+              <input type="number" class="form-control" id="train-freq"  placeholder="">
+            </div>
+
+            <button type="submit" class="btn btn-secondary" id="submit">Submit</button>
+
+          </form>
+        </div>
+        <div class="col-1"></div>
+      </div>
+    </div>
+
   </body>
   
 </html>
