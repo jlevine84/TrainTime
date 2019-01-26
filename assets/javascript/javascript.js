@@ -1,3 +1,23 @@
+//Firebase configuration and initialize database
+var config = {
+    apiKey: "AIzaSyBujKqc5E8jtTGMdi_tijdFU6D0zc5_Pp8",
+    authDomain: "train-time-51c47.firebaseapp.com",
+    databaseURL: "https://train-time-51c47.firebaseio.com",
+    projectId: "train-time-51c47",
+    storageBucket: "train-time-51c47.appspot.com",
+    messagingSenderId: "1082402305985"
+};
+firebase.initializeApp(config);
+database = firebase.database();
+
+//Local storage object for new trains
+var trains = {
+    name: [],
+    destination: [],
+    first: [],
+    frequency: []
+}
+
 //Resets the field values
 function resetVals() {
     $("#train-name").val("");
@@ -27,7 +47,7 @@ function toStandardTime(militaryTime) {
     } else {
       return militaryTime.join(':') + ' A.M.';
     }
-  }
+}
 
 //Function to calculate the total minutes remaining from the next valid departure time and the current time
 function minutesLeft(nextArrival) {
@@ -77,7 +97,7 @@ function nextDeparture(nextTrain, frequency) {
 $(document).ready(function(){
 
     $("form").submit(function(event){
-        //Capture Train Data from the submitted Form
+        //Capture Train Data from the submitted Form and reset the values
         event.preventDefault();
         var newTrainName = $("#train-name").val();
         var newTrainDest = $("#train-dest").val();
@@ -85,23 +105,45 @@ $(document).ready(function(){
         var newTrainFreq = $("#train-freq").val();
         resetVals();
         
-        //Create new Table elements for Name, Destination, and Frequency
-        var newTR = $("<tr>");
-        var newTDName = $("<td>").text(newTrainName)
-        var newTDDest = $("<td>").text(newTrainDest)
-        var newTDFreq = $("<td>").text(newTrainFreq)
+        trains.name = newTrainName;
+        trains.destination = newTrainDest;
+        trains.first = newTrainFirst;
+        trains.frequency = newTrainFreq;
 
-        //Compute next departure time based on Train First Starts data and Frequency. Create table elements
-        var nextArrival = nextDeparture(newTrainFirst, newTrainFreq)
-        newTDNextArrival = $("<td>").text(toStandardTime(nextArrival))
-
-        //Compute how many minutes remaining till next departure time. Create table elements
-        var minutesRemaining = minutesLeft(nextArrival)
-        newTDMinutes = $("<td>").text(minutesRemaining)
-        
-        //Append the new train to the database and TODO: Save to local storage
-        newTR.append(newTDName, newTDDest, newTDFreq, newTDNextArrival, newTDMinutes)
-        $("#tablebody").append(newTR)
+        database.ref("/trains").push({
+            trains: trains
+        })
     })
 
+    //Listener for trains already in the database and adds them to the database.
+    database.ref("trains").on("value", function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            //Grab data from the existing database
+            var trainsData = childSnapshot.val();
+
+            //Create new Table elements for Name, Destination, and Frequency
+            var newTR = $("<tr>");
+            var newTDName = $("<td>").text(trainsData.trains.name);
+            var newTDDest = $("<td>").text(trainsData.trains.destination);
+            var newTDFreq = $("<td>").text(trainsData.trains.frequency);
+
+            //Get Frequency and First Start time for functions
+            var trainsFreq = trainsData.trains.frequency;
+            var trainsFirst = trainsData.trains.first;
+
+            //Compute next departure time based on Train First Starts data and Frequency. Create table elements
+            var nextArrival = nextDeparture(trainsFirst, trainsFreq)
+            newTDNextArrival = $("<td>").text(toStandardTime(nextArrival))
+
+            //Compute how many minutes remaining till next departure time. Create table elements
+            var minutesRemaining = minutesLeft(nextArrival)
+            newTDMinutes = $("<td>").text(minutesRemaining)
+
+            //Append the new train to the database 
+            newTR.append(newTDName, newTDDest, newTDFreq, newTDNextArrival, newTDMinutes)
+            $("#tablebody").append(newTR)
+
+        });
+    
+    });
 });
