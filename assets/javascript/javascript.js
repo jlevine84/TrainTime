@@ -41,11 +41,13 @@ function timeConvert(time) {
 
 //Convert Military Time to Standard Time
 function toStandardTime(militaryTime) {
-    var militaryTime = militaryTime.split(':');
+    var militaryTime = militaryTime.split(":");
     if (militaryTime[0].charAt(0) == 1 && militaryTime[0].charAt(1) > 2) {
-      return (militaryTime[0] - 12) + ':' + militaryTime[1] + ' P.M.';
-    } else {
-      return militaryTime.join(':') + ' A.M.';
+      return (militaryTime[0] - 12) + ":" + militaryTime[1] + " P.M.";
+    } else if (militaryTime[0].charAt(0) > 1 && militaryTime[0].charAt(1) < 5) {
+        return (militaryTime[0] - 12) + ":" + militaryTime[1] + " P.M.";
+    }else {
+      return militaryTime.join(":") + " A.M.";
     }
 }
 
@@ -73,13 +75,12 @@ function nextDeparture(nextTrain, frequency) {
     var currentTime = (currentHour * 60) + currentMinutes;
     
     //Check to see if the train has yet to leave.
-    if (timeSplit[0] > currentHour) {
-        return nextArrival = nextTrain;
-        
+    if (parseInt(timeSplit[0]) > currentHour) {
+        return nextArrival = nextTrain;  
     }
 
     //If the train already left, the next departure time is the previous departure time + the frequency
-    if (timeSplit[0] < currentHour) {
+    if (parseInt(timeSplit[0]) < currentHour) {
         var departHours = parseInt(timeSplit[0]);
         var departMinutes = parseInt(timeSplit[1]);
         var nextDepart = (departHours * 60) + departMinutes + parseInt(frequency);
@@ -105,6 +106,7 @@ $(document).ready(function(){
         var newTrainFreq = $("#train-freq").val();
         resetVals();
         
+        //Push the Train Object to the database
         trains.name = newTrainName;
         trains.destination = newTrainDest;
         trains.first = newTrainFirst;
@@ -115,11 +117,11 @@ $(document).ready(function(){
         })
     })
 
-    //Listener for trains already in the database and adds them to the database.
-    database.ref("trains").on("value", function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-            //Grab data from the existing database
-            var trainsData = childSnapshot.val();
+    //Listener for trains the database and adds them to the table.
+    database.ref("trains").on("child_added", function(snapshot) {
+        
+            //Grab data from each object in the database
+            var trainsData = snapshot.val();
 
             //Create new Table elements for Name, Destination, and Frequency
             var newTR = $("<tr>");
@@ -142,8 +144,5 @@ $(document).ready(function(){
             //Append the new train to the database 
             newTR.append(newTDName, newTDDest, newTDFreq, newTDNextArrival, newTDMinutes)
             $("#tablebody").append(newTR)
-
-        });
-    
     });
 });
